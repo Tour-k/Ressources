@@ -8,19 +8,19 @@ Il est possible d'installer Composer directement dans ton projet sous la forme d
 
 Pour commencer telecharge ces fichiers : https://getcomposer.org/installer
 Une fois installé, lance la commande suivante pour installer Composer de manière globale sur ton système : 
-```
+```cli
 mv composer.phar /usr/local/bin/composer
 ```
 
 Ensuite il faut verifier si composer est bien à jour : 
-````
+````cli
 composer self-update
 ````
 
 ## Initialisation d'un projet composer 
 
 Afin d'initialiser un projet qui va utiliser Composer, lance la commande (toujours à la racine de ton projet) :
-````
+````cli
 composer init
 ````
 
@@ -32,7 +32,7 @@ composer.json
 Ce fichier contient toutes les informations relatives à ton projet que tu as renseignées dans ton terminal. Il contiendra également la liste des dépendances à gérer.
 
 Voici le contenu de ce fichier :
-````
+````json
 {
     "name": "wcs/quete_composer",
     "description": "Projet quete composer",
@@ -62,7 +62,7 @@ Mais comme pour les fichiers, tu vas utiliser beaucoup de classes et cela va vit
 Un petit tuto Grafikart : https://www.grafikart.fr/tutoriels/autoload-561 
 
 Pour autoloader les classes  il faut ajouter dans le fichier composer.json 
-````
+````json
 {
     "autoload": {
         "psr-4": {"Acme\\": "src/"}
@@ -93,7 +93,58 @@ Packagist fournit des informations sur :
 ### Installer une dépendance 
 
 Chercher sur le site https://packagist.org le nom de la dépendance puis lancer dans le terminal à la racine de ton projet la commande : 
-````
+````cli
 composer require swiftmailer/swiftmailer
 ````
 Ici pour installer la dépendance swifmailer (Pour envoyer des mails ;) ) 
+
+À la fin de l'installation, il est important de noter deux choses inscrites dans le terminal :
+```
+Writing lock file (cf. section lock file)
+Generating autoload files (cf. section composer autoloading)
+```
+Il faut aussi noter que ton fichier composer.json a été mis à jour. Il contient maintenant ceci :
+```json
+{
+    "name": "wcs/quete_composer",
+    "description": "Projet quete composer",
+    "authors": [
+        {
+            "name": "WCS",
+            "email": "formateur@wildcodeschool.fr"
+        }
+    ],
+    "require": {
+        "swiftmailer/swiftmailer": "^6.0"
+    }
+}
+```
+La librairie SwiftMailer a été ajoutée dans la section require.
+
+## Lock file 
+
+Le fichier composer.lock est directement lié au fichier composer.json que tu as vu plus haut. À la fin de l'installation d'une librairie, Composer t'indique Writing lock file. Cela signifie que Composer va soit créer le fichier composer.lock, soit le mettre à jour s'il existe déjà.
+
+compose.lock VS composer.json
+
+Le fichier composer.json contient des informations sur le projet, la liste des dépendances qu'il utilise, les versions de ces dépendances ainsi que les règles pour les mettre à jour.
+
+Quant au fichier composer.lock, il contient la liste des dépendances ainsi que les versions précises installées.
+
+Cela peut sembler une petite différence mais c'est en fait très différent car chaque mise à jour d'une dépendance peut entraîner un bug ou une incompatibilité.
+
+Tu ne versionnes si possible que le composer.lock pour éviter que, par accident, un développeur n'ait pas la même version de ses dépendances que les autres.
+
+install VS update
+
+De la même manière qu'il existe deux fichiers composer.lock et composer.json, il existe deux commandes pour les manipuler.
+```cli
+composer update
+
+// OU
+
+composer install
+```
+Contrairement à ce que l'on pourrait croire, la commande ```install``` n'est pas utilisée uniquement lors de l'installation, mais également pour les mises à jour. Cette commande va lire directement le fichier ```composer.lock``` et installer les versions précises décrites dedans.
+
+La commande ```update``` va, elle, lire le fichier composer.json et mettre à jour si nécessaire les dépendances en fonction des règles écrites.
