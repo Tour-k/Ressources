@@ -65,3 +65,87 @@ Pour récupérer ce dossier, tu devras donc lancer la commande (attention, il fa
     composer install
  ```
  Par la suite, tu auras éventuellement à personnaliser le fichier .env qui est un fichier de configuration qui t'est propre.
+ 
+ ## Creer un premier controller 
+  
+ Un contrôleur en Symfony n'est pas différent d'un contrôleur en MVC : c'est tout simplement une classe.
+Elle doit étendre ```Symfony\Bundle\FrameworkBundle\Controller\AbstractController```. Cette classe va également contenir des méthodes, qui seront appelées via le mécanisme de routing.
+
+Par convention, le nom de ces classes est suffixé par Controller, par exemple, ForumController. Tu en déduiras facilement le nom du fichier, ForumController.php.
+
+#### Mais où doit-on les mettre, ces contrôleurs ?
+
+Dans l'absolu, un contrôleur peut vivre n'importe où. Certaines librairies fournissent même leurs propres contrôleurs, se trouvant donc dans le dossier ```vendor/nom_de_librairie/```.
+
+Cependant, Symfony est configuré par défaut pour accueillir ceux que tu vas créer pour ton projet, dans le dossier ```src/Controller/``` (et éventuellement dans des sous-dossiers).
+
+Par convention, le nom de ces classes est suffixé par Controller, par exemple, ForumController. Tu en déduiras facilement le nom du fichier, ForumController.php.
+
+
+#### Exemple 
+
+```php 
+
+<?php
+// src/Controller/BlogController.php
+namespace App\Controller;
+
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+
+
+class BlogController extends AbstractController
+{
+    public function index()
+    {
+        return new Response(
+            '<html><body>Blog Index</body></html>'
+        );
+    }
+}
+```
+### L'objet Reponse 
+
+Eh bien c'est un objet qui représente une réponse HTTP complète. Dans une réponse HTTP, on peut trouver des headers, un code de réponse (2xx, 3xx, ...) et éventuellement un contenu (HTML, XML, ...). C'est pareil pour l'objet Response (et plus précisément Symfony\Component\HttpFoundation\Response, qui est l'objet Response du composant "HttpFondation" de Symfony).
+
+Le travail d'un contrôleur de Symfony est de retourner un objet de la classe Response ! Tout le temps. Quoi qu'il arrive. C'est une notion fondamentale à assimiler si tu veux comprendre le fonctionnement du framework.
+
+Ici notre réponse HTML est "écrite en dure", mais ça changera par la suite.
+
+## Implémenter un route 
+
+Une route, finalement, ce n'est que de la configuration. Tu peux généralement la configurer de deux manières, au format YAML ou annotations.
+
+### En yaml
+ 
+ ```php
+ //config/routes.yaml
+
+//the "app_blog_index" route name is not important yet
+app_blog_index:
+    path: /blog/
+    controller: App\Controller\BlogController::index
+```
+On a donc pour la méthode index() du controller BlogController, une route et un path associé. Mais ça serait un peu fastidieux de devoir aller à chaque fois dans routes.yaml pour configurer une nouvelle route ? C'est ici qu'entrent en jeu les annotations !
+
+### Les annotations
+Les annotations sont des commentaires à mettre dans notre code mais qui vont avoir un impact sur l’exécution. Attention, on est d'accord que des commentaires en PHP, ça n'a aucun impact à la base.
+
+Cependant, les annotations sont des commentaires un peu particuliers, avec un format bien spécifique pour être reconnus comme tels. Symfony est capable d'aller lire ces annotations (elles doivent être écrites à des endroits bien particuliers) et de "se configurer" en fonctiond'elles !
+
+Remarque : Il est possible d'utiliser uniquement la configuration de routes via le yaml, mais aussi via XML ou directement en PHP, mais ce sont les annotations qui sont recommandées dans les bonnes pratiques actuelles de Symfony.
+
+```php
+[...]
+use Symfony\Component\Routing\Annotation\Route;
+
+
+class BlogController extends AbstractController
+{
+    /**
+     * @Route("/blog", name="blog_index")
+    */
+    public function index()
+[...]
+```
