@@ -176,3 +176,35 @@ Et créer ta vue templates/blog/index.html.twig associée :
 C'est tout bon ? Est-ce que tu es en train de te dire "mais c'est bizarre, on m'a dit qu'un contrôleur devait retourner un objet Response, et pourtant j'ai bien l'impression que je retourne le render d'un Twig" ? Attention, dans un contrôleur $this->render() renvoie bien un objet Response, et si tu en doutes, fais un ctrl+clic gauche sur le nom de la méthode dans PhpStorm !
 
 Ici {{ owner }} est une variable envoyée depuis le contrôleur à ta vue. Pour l'exemple sa valeur est égale à Thomas. Par conséquent si tu actualises ta page, ta vue à la route blog/ affiche "Thomas's blog index".
+
+## Rooting avancé 
+
+#### Définir des paramètres
+```php
+// src/Controller/BlogController.php
+namespace App\Controller;
+
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
+
+
+class BlogController extends AbstractController
+{
+    [...]
+    /**
+    * @Route("/blog/list/{page}", name="blog_list")
+    */
+    public function list($page)
+    {
+        return $this->render('blog/list.html.twig', ['page' => $page]);
+    }
+}
+
+Comme tu le vois, il est très simple de passer un paramètre via le router. Il suffit d'ajouter ce dernier entre accolades, ici {page}, où tu le souhaites dans ta route. Si tu saisis la route /blog/2, le paramètre {page} de la route va prendre la valeur 2, puis transférer cette valeur dans le paramètre du même nom, ici $page, de la méthode list(). Il est bien entendu possible d'ajouter autant de paramètres que nécessaires, généralement séparés par des slashes, par exemple /blog/{page}/{limit} . Fais cependant attention à la lisibilité de tes routes !
+
+Tu peux ensuite utiliser la variable $page dans ton code comme bon te semble. Dans l'exemple, la donnée est envoyée en paramètre à Twig, mais tu pourrais t'en servir pour tout autre chose.
+
+Exemple templates/blog/list.html.twig :
+
+<h1>Page number {{ page }}.</h1>
