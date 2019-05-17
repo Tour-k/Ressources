@@ -135,7 +135,7 @@ Cela peut sembler une petite différence mais c'est en fait très différent car
 
 Tu ne versionnes si possible que le composer.lock pour éviter que, par accident, un développeur n'ait pas la même version de ses dépendances que les autres.
 
-install VS update
+### install VS update
 
 De la même manière qu'il existe deux fichiers composer.lock et composer.json, il existe deux commandes pour les manipuler.
 ```cli
