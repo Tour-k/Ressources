@@ -54,3 +54,14 @@ Ou concernant ton environnement de projet :
 ```cli
 bin/console about
 ```
+## Récupérer un projet Symfony 
+
+Quand tu récupères un projet existant, c'est le plus souvent en utilisant ```git clone```. Le dossier récupéré contient déjà toute l'infrastructure de dossiers de Symfony. Mais attention, il va te manquer un certain nombre de fichiers et de dossiers, notamment ceux ignorés dans le .gitignore.
+
+Par exemple, le dossier vendor/ (généré par Composer), est ignoré. C'est sûrement le plus gros dossier du projet, car il contient les bibliothèques utilisées par l'application.
+
+Pour récupérer ce dossier, tu devras donc lancer la commande (attention, il faut que tu sois dans le dossier du projet Symfony) :
+```cli
+    composer install
+ ```
+ Par la suite, tu auras éventuellement à personnaliser le fichier .env qui est un fichier de configuration qui t'est propre.
