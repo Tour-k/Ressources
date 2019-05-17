@@ -200,11 +200,70 @@ class BlogController extends AbstractController
         return $this->render('blog/list.html.twig', ['page' => $page]);
     }
 }
-
+```
 Comme tu le vois, il est très simple de passer un paramètre via le router. Il suffit d'ajouter ce dernier entre accolades, ici {page}, où tu le souhaites dans ta route. Si tu saisis la route /blog/2, le paramètre {page} de la route va prendre la valeur 2, puis transférer cette valeur dans le paramètre du même nom, ici $page, de la méthode list(). Il est bien entendu possible d'ajouter autant de paramètres que nécessaires, généralement séparés par des slashes, par exemple /blog/{page}/{limit} . Fais cependant attention à la lisibilité de tes routes !
 
 Tu peux ensuite utiliser la variable $page dans ton code comme bon te semble. Dans l'exemple, la donnée est envoyée en paramètre à Twig, mais tu pourrais t'en servir pour tout autre chose.
 
 Exemple templates/blog/list.html.twig :
-
+```html
 <h1>Page number {{ page }}.</h1>
+```
+
+#### Contraintes sur les routes
+Le mot clé requirements
+La route que tu viens de définir nécessite donc un paramètre {page}. Logiquement, un numéro de page doit être un entier. Cependant, si tu n'indiques rien, il est tout à fait possible de saisir autre chose en paramètre, par ex /blog/deux/, ce qui pourrait poser des problèmes. Il faut donc interdire cela.
+
+
+Heureusement, le router de Symfony embarque la possibilité d'imposer des limitations aux paramètres.
+```php
+  /**
+   * @Route("/blog/list/{page}", requirements={"page"="\d+"}, name="blog_list")
+   */
+   public function list($page)
+   {
+       // ...
+   }
+```
+L'exemple ci-dessus reprend le précédent, en ajoutant l'option requirements, qui permet d'ajouter des prérequis aux différents paramètres. Ici, pour le paramètre page, le prérequis est \d+. Tu reconnaîtras une expression régulière qui correspond à un chiffre répété de 1 à n fois, autrement dit un entier. Les requirements sont toujours définis par une regex, qui est un moyen simple et puissant de décrire des motifs variables.
+
+Remarque : il est aussi possible d'écrire les requirements de manière plus condensée : @Route("/blog/list/{page<\d+>}", name="blog_list"). Cette écriture inline nécessite l'utilisation des chevrons <> pour encadrer la regex.
+
+Au delà des requirements sur le format des paramètres, il est également possible de définir d'autres contraintes à tes routes.
+
+Le mot clé methods
+Certaines routes ne devraient être accessibles qu'en GET, d'autres qu'en POST (et pareillement avec d'autres verbes HTTP). L'annotation @Route peut donc prendre en paramètres les types de méthode acceptés. Par exemple, si tu souhaites créer un nouvel article (via un formulaire en POST uniquement), tu feras :
+
+```@Route("/blog/article/new", methods={"POST"}, name="article_new")```
+Si tu souhaites afficher un article en fonction de son identifiant, cela se fera plutôt par un lien, donc en GET.
+
+```@Route("/blog/article/{id}", methods={"GET"}, name="article_show")```
+Et si tu souhaites supprimer un article, tu pourrais limiter la méthode à DELETE uniquement.
+
+```@Route("/blog/article/{id}", methods={"DELETE"}, name="article_delete")```
+Comme tu le remarques, dans ce cas les routes article_show et article_delete ont la même définition /blog/article/{id}, mais la méthode définie n'étant pas la même, il n'y a pas de conflits entre elles. Le router les considère bien comme deux routes différentes.
+
+Les méthodes peuvent également se cumuler : methods={"GET","POST"}). Définir la méthode dans les routes est donc un très bon moyen de conserver des URLs simples à écrire, tout en restant très spécifiques. Les routes d'API se reposent beaucoup sur ces contraintes de méthodes HTTP.
+
+##### Valeur par defaut
+```php
+/**
+ * @Route("/blog/list/{page}",
+ *     requirements={"page"="\d+"},
+ *     defaults={"page"=1},
+ *     name="blog_list"
+ * )
+ */
+ ```
+Là encore, une notation plus concise existe : ```@Route("/blog/list/{page<\d+>?1}", name="blog_list")```. C'est cette fois-ci le symbole ```?``` qui permet de définir la valeur par défaut.
+
+Une autre manière de faire consiste à définir les paramètres par défaut directement au niveau de la méthode :
+```php
+  /**
+   * @Route("/blog/list/{page}", requirements={"page"="\d+"}, name="blog_list")
+   */
+   public function list($page = 1)
+   {
+       // ...
+   }
+```
