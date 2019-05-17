@@ -135,6 +135,7 @@ Les annotations sont des commentaires à mettre dans notre code mais qui vont av
 Cependant, les annotations sont des commentaires un peu particuliers, avec un format bien spécifique pour être reconnus comme tels. Symfony est capable d'aller lire ces annotations (elles doivent être écrites à des endroits bien particuliers) et de "se configurer" en fonctiond'elles !
 
 Remarque : Il est possible d'utiliser uniquement la configuration de routes via le yaml, mais aussi via XML ou directement en PHP, mais ce sont les annotations qui sont recommandées dans les bonnes pratiques actuelles de Symfony.
+Exemple d'annotation : 
 
 ```php
 [...]
@@ -149,3 +150,29 @@ class BlogController extends AbstractController
     public function index()
 [...]
 ```
+
+## Appeler un template TWIG 
+
+Voilà, on a une page, mais on aimerait bien appeler une vue Twig plutôt que de mettre tout le HTML à la main dans l'objet Response...
+
+Eh bien comme par hasard, c'est prévu de base dans ton installation de Symfony !
+
+Pour cela, mets à jour ta méthode méthode index() dans ton contrôleur:
+
+```php
+[...]
+public function index()
+{
+    return $this->render('blog/index.html.twig', [
+            'owner' => 'Thomas',
+    ]);
+}
+[...]
+```
+Et créer ta vue templates/blog/index.html.twig associée :
+```html
+<h1>{{ owner }}'s blog index</h1>
+```
+C'est tout bon ? Est-ce que tu es en train de te dire "mais c'est bizarre, on m'a dit qu'un contrôleur devait retourner un objet Response, et pourtant j'ai bien l'impression que je retourne le render d'un Twig" ? Attention, dans un contrôleur $this->render() renvoie bien un objet Response, et si tu en doutes, fais un ctrl+clic gauche sur le nom de la méthode dans PhpStorm !
+
+Ici {{ owner }} est une variable envoyée depuis le contrôleur à ta vue. Pour l'exemple sa valeur est égale à Thomas. Par conséquent si tu actualises ta page, ta vue à la route blog/ affiche "Thomas's blog index".
