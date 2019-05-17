@@ -282,7 +282,13 @@ L'utilisation la plus fréquente des routes au sein d'un contrôleur est la redi
 Il faut bien comprendre que la redirection revient au même que de taper l'url dans le navigateur, et donc le code de la méthode list() correspondant à la route /blog/list/5 va bien s'exécuter et l'éventuelle vue associée s'affichera donc. Pour rappel, après une redirection, les données disponibles (ici celle de la page new), sont perdues.
 
 Dans twig
-Dans tes vues, tu es souvent amené à afficher des liens internes. Pour définir la cible de ces liens, tu pourrais très bien entrer la route "en dur", par exemple ```html <a href="/blog/list/5">Afficher la page 5</a>```. Cependant, si tu modifies la définition de ta route dans ton contrôleur, alors ton lien ne fonctionnera alors plus. Dommage ! Une manière plus robuste de faire cela est d'utiliser la fonction ```{{ path() }}``` de twig, qui sert à faire appel à une route prédéfinie. Là encore, il faut lui donner le nom de la route (d'où l'intérêt de bien définir un name à chacune de tes routes) et une liste de paramètres (attention à la syntaxe particulière qui contient parenthèses et accolades).
+Dans tes vues, tu es souvent amené à afficher des liens internes. Pour définir la cible de ces liens, tu pourrais très bien entrer la route "en dur", par exemple 
+```html
+<a href="/blog/list/5">Afficher la page 5</a>
+``` 
+Cependant, si tu modifies la définition de ta route dans ton contrôleur, alors ton lien ne fonctionnera alors plus. Dommage ! Une manière plus robuste de faire cela est d'utiliser la fonction ```{{ path() }}``` de twig, qui sert à faire appel à une route prédéfinie. Là encore, il faut lui donner le nom de la route (d'où l'intérêt de bien définir un name à chacune de tes routes) et une liste de paramètres (attention à la syntaxe particulière qui contient parenthèses et accolades).
 
-```html <a href="{{ path('blog_list', {'page':5}) }}">Afficher la page 5</a>```
+```html
+<a href="{{ path('blog_list', {'page':5}) }}">Afficher la page 5</a>
+```
 Maintenant, si tu modifies la définition de ta route blog_list, de /blog/list/{page} à /blog/page/{page} par exemple, l'URL du lien sera mise à jour automatiquement de /blog/list/5 à /blog/page/5.
